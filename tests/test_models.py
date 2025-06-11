@@ -27,10 +27,9 @@ import os
 import logging
 import unittest
 from decimal import Decimal
-from service.models import Product, Category, db
+from service.models import Product, Category, db, DataValidationError
 from service import app
 from tests.factories import ProductFactory
-from service.models import DataValidationError
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
@@ -144,7 +143,6 @@ class TestProductModel(unittest.TestCase):
         product = ProductFactory()
         product.id = None
         self.assertRaises(DataValidationError, product.update)
-        
 
     def test_delete_a_product(self):
         """It should delete a product in the database"""
@@ -176,7 +174,7 @@ class TestProductModel(unittest.TestCase):
             product = ProductFactory()
             product.create()
         products = Product.all()
-        name = products[0].name 
+        name = products[0].name
         count = sum(1 for product in products if name == product.name)
         found_products = Product.find_by_name(name)
         self.assertEqual(found_products.count(), count)
@@ -221,7 +219,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found_products.count(), count)
         for product in found_products:
             self.assertEqual(product.price, price)
-    
+
     def test_find_product_by_prize_with_string(self):
         """It should find a product from the database by prize with a string"""
         for _ in range(10):
